@@ -1,0 +1,59 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  application:
+    name: gae-json-patch
+    events:
+      jdbc-schema-initialization.enabled: true
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+  jpa:
+    generate-ddl: "false"
+    show-sql: true # set to true to see query logs
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true # set to true to see formatted query logs
+  sql:
+    init:
+      mode: always
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:8084}
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: "*"
+    enabled-by-default: true
+
+springdoc:
+  use-management-port: true
+  writer-with-order-by-keys: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    gae.piaz: DEBUG
