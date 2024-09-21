@@ -14,6 +14,7 @@ in a generic, reusable, and optimized way.
 - [Typescript Stubs Generation](#typescript-stubs-generation)
 - [Stubs Usage Example in Frontend](#stubs-usage-example-in-frontend)
 - [Running Locally](#running-locally)
+- [Testing](#testing)
 
 ## Introduction
 This project showcases a method to apply JSON Patch operations to JPA entities in a Spring Boot application. 
@@ -27,12 +28,9 @@ The project uses the following technologies and libraries:
 
 ## Core Components
 The core components of the project are:
-- [JsonPatchService.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchService.java): 
-- The service class that applies JSON Patch operations to JPA entities.
-- [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchUpdate.java): 
-- An annotation that documents the API endpoints and specifies the allowed paths and type names for the Stubs.
-- [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/common/AbstractUpdateService.java): 
-- A generic service class that provides the update functionality for JPA entities.
+- [JsonPatchService.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchService.java): The service class that applies JSON Patch operations to JPA entities.
+- [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchUpdate.java): An annotation that documents the API endpoints and specifies the allowed paths and type names for the Stubs.
+- [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/common/AbstractUpdateService.java): A generic service class that provides the update functionality for JPA entities.
 
 ## How to apply JSON Patch to ANY JPA entity
 1) You need to define Bean(s) with all the fields that you want to update in the entity, e.g: 
@@ -40,7 +38,7 @@ The core components of the project are:
 @Builder
 public record BookUpdateBean(
         String title,
-        AuthorUpdateBean isbn
+        AuthorUpdateBean author
 ) { }
 @Builder
 public record AuthorUpdateBean(
@@ -55,7 +53,7 @@ protected abstract void updateEntityFields(T entity, U updateBean);
 protected abstract U mapEntityToBean(T entity);
 protected abstract V mapEntityToDTO(T entity);
 ```
-First Param of the class is the JPA entity, the second is the Bean class, and the third is the DTO class.
+The First parameter of the Abstract class generic is the JPA entity, the second is the Bean class, and the third is the DTO class.
 
 ```java
 @Service
@@ -124,8 +122,8 @@ For OpenAPI YAML documentation:
 
 The generated documentation can also be found in the `api` folder.
 
-The [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/annotation/JsonPatchUpdate.java) annotation is used to document the endpoints.
-Using the parameters of the annotation, we can specify the path allowed and the type name for the Stubs.
+The [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/annotation/JsonPatchUpdate.java) annotation documents the endpoints.
+Using the annotation parameters, we can specify the path allowed and the type name for the Stubs.
 E.g:
 
 ```java
@@ -212,4 +210,9 @@ To run the application locally, execute the following command:
 ./gradlew bootRun
 ```
 
+## Testing
+A simple test [JsonPatchServiceTest](src/test/java/gae/piaz/jsonpatch/JsonPatchApplicationTests.java) is provided to demonstrate the functionality of the JSON Patch service.
 
+```bash
+./gradlew test
+```
