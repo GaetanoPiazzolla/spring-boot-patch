@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.config;
+package gae.piaz.jsonpatch.service.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

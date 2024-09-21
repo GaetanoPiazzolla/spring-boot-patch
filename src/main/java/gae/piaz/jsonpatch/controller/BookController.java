@@ -1,11 +1,11 @@
 package gae.piaz.jsonpatch.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import gae.piaz.jsonpatch.config.JsonPatchUpdate;
 import gae.piaz.jsonpatch.controller.dto.BookDTO;
 import gae.piaz.jsonpatch.service.BookUpdateService;
-import gae.piaz.jsonpatch.service.jsonpatch.JsonPatchServerError;
-import gae.piaz.jsonpatch.service.jsonpatch.UpdateResult;
+import gae.piaz.jsonpatch.service.common.JsonPatchServerError;
+import gae.piaz.jsonpatch.service.common.JsonPatchUpdate;
+import gae.piaz.jsonpatch.service.common.UpdateResult;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

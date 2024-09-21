@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.service.jsonpatch;
+package gae.piaz.jsonpatch.service.common;
 
 /**
  * A simple record to hold the body of the patch operation. It contains the updated body object and

@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.service.jsonpatch;
+package gae.piaz.jsonpatch.service.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;

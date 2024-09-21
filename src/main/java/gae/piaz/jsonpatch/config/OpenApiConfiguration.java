@@ -1,5 +1,6 @@
 package gae.piaz.jsonpatch.config;
 
+import gae.piaz.jsonpatch.service.common.JsonPatchUpdate;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.*;

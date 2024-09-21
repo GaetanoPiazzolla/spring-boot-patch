@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.service.jsonpatch;
+package gae.piaz.jsonpatch.service.common;
 
 import lombok.Builder;
 
