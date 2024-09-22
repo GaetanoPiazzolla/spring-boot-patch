@@ -93,22 +93,17 @@ public class BookService extends AbstractUpdateService<Book, BookUpdateBean, Boo
 ```
 
 Call the `updateEntity` method from the service class in the controller:
+
 ```java
+public static final String APPLICATION_JSON_PATCH_VALUE = "application/json-patch+json";
+
 @PatchMapping(
-    path = "/{id}",
-    consumes = APPLICATION_JSON_PATCH_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE)
-@JsonPatchUpdate(
-    paths = {"title", "author/id", "isbn"},
-    schemaName = "BookPatchOpsDTO")
+            path = "/{id}",
+            consumes = APPLICATION_JSON_PATCH_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+            schemaName = "VersionPatchOpsDTO")
 public ResponseEntity<BookDTO> updateBook(
-    @PathVariable("id") Integer bookId, @RequestBody JsonNode patch)
-        throws JsonPatchServerError {
-    UpdateResult<BookDTO> result = bookService.updateEntity(bookId, patch);
-    if (!result.updated()) {
-        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
-    }
-return ResponseEntity.ok(result.result());
+        return bookService.updateEntity(bookId, patch);
 }
 ```
 
@@ -127,22 +122,9 @@ Using the annotation parameters, we can specify the path allowed and the type na
 E.g:
 
 ```java
-@PatchMapping(
-            path = "/{id}",
-            consumes = APPLICATION_JSON_PATCH_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @JsonPatchUpdate(
-            paths = {"title", "author/id", "isbn"},
-            schemaName = "BookPatchOpsDTO")
-    public ResponseEntity<BookDTO> updateBook(
-            @PathVariable("id") Integer bookId, @RequestBody JsonNode patch)
-            throws JsonPatchServerError {
-        UpdateResult<BookDTO> result = bookService.updateEntity(bookId, patch);
-        if (!result.updated()) {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
-        }
-        return ResponseEntity.ok(result.result());
-    }
+@JsonPatchUpdate(
+    paths = {"title", "author/id", "isbn"},
+    schemaName = "VersionPatchOpsDTO")
 ```
 
 ## HTTP Status Responses
