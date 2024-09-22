@@ -34,7 +34,7 @@ public class BookController {
     @JsonPatchUpdate(
             paths = {"title", "author/id", "isbn"},
             schemaName = "VersionPatchOpsDTO")
-    public ResponseEntity<BookDTO> updateVersion(
+    public ResponseEntity<BookDTO> updateBook(
             @PathVariable("id") Integer bookId, @RequestBody JsonNode patch)
             throws JsonPatchServerError {
         UpdateResult<BookDTO> result = bookService.updateEntity(bookId, patch);

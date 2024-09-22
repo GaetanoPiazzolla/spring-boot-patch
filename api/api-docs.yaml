@@ -1,0 +1,105 @@
+openapi: 3.0.1
+info:
+  description: This is the API description for the awesome brand new FAST SiA Modulith
+    backend.
+  title: Sia Modulith API
+  version: "1.0"
+servers:
+- description: Generated server url
+  url: http://localhost:8083
+paths:
+  /api/v1/books/{id}:
+    get:
+      operationId: getBooks
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDTO"
+          description: OK
+      tags:
+      - book-controller
+    patch:
+      operationId: updateBook
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/VersionPatchOpsDTO"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+        "304":
+          description: Not modified
+        "400":
+          description: Precondition failed
+        "404":
+          description: Resource not found
+        "500":
+          description: Internal server error
+      tags:
+      - book-controller
+components:
+  schemas:
+    BookDTO:
+      type: object
+      properties:
+        author:
+          type: string
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+    JsonNode:
+      type: object
+    JsonPatchOps:
+      type: string
+      enum:
+      - add
+      - remove
+      - replace
+      - move
+      - copy
+      - test
+    JsonPatchValue:
+      anyOf:
+      - type: string
+      - type: number
+      - type: boolean
+      - type: object
+    VersionPatchOpsDTO:
+      type: object
+      properties:
+        op:
+          $ref: "#/components/schemas/JsonPatchOps"
+        path:
+          type: string
+          enum:
+          - /title
+          - /author/id
+          - /isbn
+        value:
+          $ref: "#/components/schemas/JsonPatchValue"
+      required:
+      - op
+      - path
+      - value

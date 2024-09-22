@@ -13,7 +13,6 @@ in a generic, reusable, and optimized way.
 - [Concurrency Handling](#concurrency-handling)
 - [Typescript Stubs Generation](#typescript-stubs-generation)
 - [Stubs Usage Example in Frontend](#stubs-usage-example-in-frontend)
-- [Running Locally](#running-locally)
 - [Testing](#testing)
 
 ## Introduction
@@ -23,7 +22,7 @@ The approach is designed to be generic, reusable, and optimized for performance.
 The project uses the following technologies and libraries:
 - JSON Patch, as implemented by the [com.flipkart.zjsonpatch:zjsonpatch](https://github.com/flipkart-incubator/zjsonpatch) library
 - Spring Boot and related libs version 3.3.4
-- Swagger and OpenAPI for API documentation
+- Swagger and OpenAPI for API documentation 3.0.1
 - Lombok
 
 ## Core Components
@@ -115,7 +114,7 @@ For OpenAPI YAML documentation:
 - JSON: `http://localhost:8084/openapi/public`
 - YAML: `http://localhost:8084/openapi/public/yaml`
 
-The generated documentation can also be found in the `api` folder.
+The generated documentation example can be found committed in the [api-docs.yaml](api/api-docs.yaml) file.
 
 The [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/annotation/JsonPatchUpdate.java) annotation documents the endpoints.
 Using the annotation parameters, we can specify the path allowed and the type name for the Stubs.
@@ -147,54 +146,60 @@ curl http://localhost:8084/openapi/public/yaml > ./api/api-docs.yaml
 ```
 
 ## Stubs Usage Example in Frontend
+
+In the [frontend](frontend) directory, the generated TypeScript stubs are used to demonstrate how to apply JSON Patch operations to a JPA entity in a frontend application:
+
 ```typescript
 import { VersionPatchOpsDTO } from './api';
-import { Configuration, **ControllerApi } from './api';
+import { Configuration, BookControllerApi } from './api';
 
-const patch: *PatchOpsDTO = [
-  {
-    op: 'replace',
-    value: 'New Title',
-    path: '/title',
-  },
-  {
-    op: 'replace',
-    value: 1,
-    path: '/author/id',
-  }];
+const patch: VersionPatchOpsDTO[] = [
+    {
+        op: 'replace',
+        value: 'New Title',
+        path: '/title',
+    },
+    {
+        op: 'replace',
+        value: 1,
+        path: '/author/id',
+    }];
 
 const configuration = new Configuration({
-    basePath: backendUrl,
+    basePath: "http://localhost:8083",
 });
 
-http.controllerApi = new **ControllerApi(configuration);
+const controllerApi = new BookControllerApi(configuration);
 
 const options = {
     headers: {
-         Authorization: ....
+        Authorization: 'Bearer YOUR_TOKEN_HERE'
     },
 };
 
-http.controllerApi.updateVersion(1, patch, options).subscribe(
-    (response) => {
-        console.log(response);
-    },
-    (error) => {
+controllerApi.updateBook(1, patch, options)
+    .then((response) => {
+        console.log(response.data);
+    })
+    .catch((error) => {
         console.error(error);
-    }
-);
-```
-
-## Running Locally
-To run the application locally, execute the following command:
-
-```bash
-./gradlew bootRun
+    });
 ```
 
 ## Testing
-A simple test [JsonPatchServiceTest](src/test/java/gae/piaz/jsonpatch/JsonPatchApplicationTests.java) is provided to demonstrate the functionality of the JSON Patch service.
+A simple test [JsonPatchServiceTest](src/test/java/gae/piaz/jsonpatch/JsonPatchApplicationTests.java) 
+is provided to demonstrate the functionality of the JSON Patch service.
+
+Otherwise, you can start the application locally:
 
 ```bash
 ./gradlew test
+```
+
+And then run the Typescript script in the frontend directory:
+
+```bash
+cd frontend
+npm install
+npm start
 ```
