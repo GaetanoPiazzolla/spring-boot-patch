@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.service.common;
+package gae.piaz.jsonpatch.service.core;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JsonPatchUpdate {
 
-    String[] paths();
-
-    String schemaName();
+    String[] allowedPaths();
 }

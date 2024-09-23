@@ -1,4 +1,4 @@
-package gae.piaz.jsonpatch.service;
+package gae.piaz.jsonpatch.service.core;
 
 import org.springframework.web.bind.annotation.ResponseStatus;
 

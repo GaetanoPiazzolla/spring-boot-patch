@@ -1,6 +1,8 @@
 package gae.piaz.jsonpatch.domain;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,4 +20,11 @@ public class AuthorEntity {
     private String name;
 
     private String email;
+
+    @OneToMany(
+            mappedBy = "author",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<BookEntity> books = new HashSet<>();
 }

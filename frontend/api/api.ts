@@ -26,6 +26,25 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface AuthorDTO
+ */
+export interface AuthorDTO {
+    /**
+     * 
+     * @type {number}
+     * @memberof AuthorDTO
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthorDTO
+     */
+    'name'?: string;
+}
+/**
+ * 
+ * @export
  * @interface BookDTO
  */
 export interface BookDTO {
@@ -34,7 +53,7 @@ export interface BookDTO {
      * @type {string}
      * @memberof BookDTO
      */
-    'author'?: string;
+    'authorName'?: string;
     /**
      * 
      * @type {number}
@@ -48,6 +67,33 @@ export interface BookDTO {
      */
     'title'?: string;
 }
+/**
+ * 
+ * @export
+ * @interface JsonPatchItem
+ */
+export interface JsonPatchItem {
+    /**
+     * 
+     * @type {JsonPatchOps}
+     * @memberof JsonPatchItem
+     */
+    'op': JsonPatchOps;
+    /**
+     * 
+     * @type {string}
+     * @memberof JsonPatchItem
+     */
+    'path': string;
+    /**
+     * 
+     * @type {JsonPatchValue}
+     * @memberof JsonPatchItem
+     */
+    'value'?: JsonPatchValue;
+}
+
+
 /**
  * 
  * @export
@@ -73,39 +119,118 @@ export type JsonPatchOps = typeof JsonPatchOps[keyof typeof JsonPatchOps];
  */
 export interface JsonPatchValue {
 }
+
 /**
- * 
+ * AuthorControllerApi - axios parameter creator
  * @export
- * @interface VersionPatchOpsDTO
  */
-export interface VersionPatchOpsDTO {
+export const AuthorControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * <b>Allowed paths are:</b><br><br>- name -> change the name of the author<br>- books/- -> add and remove items from the books of this author<br>- books/-/title -> update an author\'s book title<br>- books/-/isbn -> update an author\'s book isbn
+         * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateAuthor: async (id: number, jsonPatchItem: Array<JsonPatchItem>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateAuthor', 'id', id)
+            // verify required parameter 'jsonPatchItem' is not null or undefined
+            assertParamExists('updateAuthor', 'jsonPatchItem', jsonPatchItem)
+            const localVarPath = `/api/v1/authors/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json-patch+json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(jsonPatchItem, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthorControllerApi - functional programming interface
+ * @export
+ */
+export const AuthorControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthorControllerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * <b>Allowed paths are:</b><br><br>- name -> change the name of the author<br>- books/- -> add and remove items from the books of this author<br>- books/-/title -> update an author\'s book title<br>- books/-/isbn -> update an author\'s book isbn
+         * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateAuthor(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateAuthor(id, jsonPatchItem, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthorControllerApi.updateAuthor']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthorControllerApi - factory interface
+ * @export
+ */
+export const AuthorControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthorControllerApiFp(configuration)
+    return {
+        /**
+         * <b>Allowed paths are:</b><br><br>- name -> change the name of the author<br>- books/- -> add and remove items from the books of this author<br>- books/-/title -> update an author\'s book title<br>- books/-/isbn -> update an author\'s book isbn
+         * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateAuthor(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: any): AxiosPromise<void> {
+            return localVarFp.updateAuthor(id, jsonPatchItem, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * AuthorControllerApi - object-oriented interface
+ * @export
+ * @class AuthorControllerApi
+ * @extends {BaseAPI}
+ */
+export class AuthorControllerApi extends BaseAPI {
     /**
-     * 
-     * @type {JsonPatchOps}
-     * @memberof VersionPatchOpsDTO
+     * <b>Allowed paths are:</b><br><br>- name -> change the name of the author<br>- books/- -> add and remove items from the books of this author<br>- books/-/title -> update an author\'s book title<br>- books/-/isbn -> update an author\'s book isbn
+     * @param {number} id 
+     * @param {Array<JsonPatchItem>} jsonPatchItem 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthorControllerApi
      */
-    'op': JsonPatchOps;
-    /**
-     * 
-     * @type {string}
-     * @memberof VersionPatchOpsDTO
-     */
-    'path': VersionPatchOpsDTOPathEnum;
-    /**
-     * 
-     * @type {JsonPatchValue}
-     * @memberof VersionPatchOpsDTO
-     */
-    'value': JsonPatchValue;
+    public updateAuthor(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: RawAxiosRequestConfig) {
+        return AuthorControllerApiFp(this.configuration).updateAuthor(id, jsonPatchItem, options).then((request) => request(this.axios, this.basePath));
+    }
 }
 
-export const VersionPatchOpsDTOPathEnum = {
-    Title: '/title',
-    AuthorId: '/author/id',
-    Isbn: '/isbn'
-} as const;
-
-export type VersionPatchOpsDTOPathEnum = typeof VersionPatchOpsDTOPathEnum[keyof typeof VersionPatchOpsDTOPathEnum];
 
 
 /**
@@ -115,50 +240,17 @@ export type VersionPatchOpsDTOPathEnum = typeof VersionPatchOpsDTOPathEnum[keyof
 export const BookControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * <b>Allowed paths are:</b><br><br>- title<br>- author/id<br>- isbn
          * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getBooks: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getBooks', 'id', id)
-            const localVarPath = `/api/v1/books/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {Array<VersionPatchOpsDTO>} versionPatchOpsDTO 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateBook: async (id: number, versionPatchOpsDTO: Array<VersionPatchOpsDTO>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateBook: async (id: number, jsonPatchItem: Array<JsonPatchItem>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateBook', 'id', id)
-            // verify required parameter 'versionPatchOpsDTO' is not null or undefined
-            assertParamExists('updateBook', 'versionPatchOpsDTO', versionPatchOpsDTO)
+            // verify required parameter 'jsonPatchItem' is not null or undefined
+            assertParamExists('updateBook', 'jsonPatchItem', jsonPatchItem)
             const localVarPath = `/api/v1/books/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -179,7 +271,7 @@ export const BookControllerApiAxiosParamCreator = function (configuration?: Conf
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(versionPatchOpsDTO, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(jsonPatchItem, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -197,26 +289,14 @@ export const BookControllerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = BookControllerApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
+         * <b>Allowed paths are:</b><br><br>- title<br>- author/id<br>- isbn
          * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getBooks(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BookDTO>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getBooks(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['BookControllerApi.getBooks']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {Array<VersionPatchOpsDTO>} versionPatchOpsDTO 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async updateBook(id: number, versionPatchOpsDTO: Array<VersionPatchOpsDTO>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateBook(id, versionPatchOpsDTO, options);
+        async updateBook(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateBook(id, jsonPatchItem, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BookControllerApi.updateBook']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -232,23 +312,14 @@ export const BookControllerApiFactory = function (configuration?: Configuration,
     const localVarFp = BookControllerApiFp(configuration)
     return {
         /**
-         * 
+         * <b>Allowed paths are:</b><br><br>- title<br>- author/id<br>- isbn
          * @param {number} id 
+         * @param {Array<JsonPatchItem>} jsonPatchItem 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getBooks(id: number, options?: any): AxiosPromise<BookDTO> {
-            return localVarFp.getBooks(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {Array<VersionPatchOpsDTO>} versionPatchOpsDTO 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateBook(id: number, versionPatchOpsDTO: Array<VersionPatchOpsDTO>, options?: any): AxiosPromise<void> {
-            return localVarFp.updateBook(id, versionPatchOpsDTO, options).then((request) => request(axios, basePath));
+        updateBook(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: any): AxiosPromise<void> {
+            return localVarFp.updateBook(id, jsonPatchItem, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -261,26 +332,15 @@ export const BookControllerApiFactory = function (configuration?: Configuration,
  */
 export class BookControllerApi extends BaseAPI {
     /**
-     * 
+     * <b>Allowed paths are:</b><br><br>- title<br>- author/id<br>- isbn
      * @param {number} id 
+     * @param {Array<JsonPatchItem>} jsonPatchItem 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BookControllerApi
      */
-    public getBooks(id: number, options?: RawAxiosRequestConfig) {
-        return BookControllerApiFp(this.configuration).getBooks(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {number} id 
-     * @param {Array<VersionPatchOpsDTO>} versionPatchOpsDTO 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof BookControllerApi
-     */
-    public updateBook(id: number, versionPatchOpsDTO: Array<VersionPatchOpsDTO>, options?: RawAxiosRequestConfig) {
-        return BookControllerApiFp(this.configuration).updateBook(id, versionPatchOpsDTO, options).then((request) => request(this.axios, this.basePath));
+    public updateBook(id: number, jsonPatchItem: Array<JsonPatchItem>, options?: RawAxiosRequestConfig) {
+        return BookControllerApiFp(this.configuration).updateBook(id, jsonPatchItem, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -8,9 +8,13 @@ servers:
 - description: Generated server url
   url: http://localhost:8083
 paths:
-  /api/v1/books/{id}:
-    get:
-      operationId: getBooks
+  /api/v1/authors/{id}:
+    patch:
+      description: <b>Allowed paths are:</b><br><br>- name -> change the name of the
+        author<br>- books/- -> add and remove items from the books of this author<br>-
+        books/-/title -> update an author's book title<br>- books/-/isbn -> update
+        an author's book isbn
+      operationId: updateAuthor
       parameters:
       - in: path
         name: id
@@ -18,16 +22,30 @@ paths:
         schema:
           type: integer
           format: int32
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/JsonPatchItem"
+        required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookDTO"
-          description: OK
+          description: Successful operation
+        "304":
+          description: Not modified
+        "400":
+          description: Precondition failed
+        "404":
+          description: Resource not found
+        "500":
+          description: Internal server error
       tags:
-      - book-controller
+      - author-controller
+  /api/v1/books/{id}:
     patch:
+      description: <b>Allowed paths are:</b><br><br>- title<br>- author/id<br>- isbn
       operationId: updateBook
       parameters:
       - in: path
@@ -42,7 +60,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: "#/components/schemas/VersionPatchOpsDTO"
+                $ref: "#/components/schemas/JsonPatchItem"
         required: true
       responses:
         "200":
@@ -59,10 +77,18 @@ paths:
       - book-controller
 components:
   schemas:
+    AuthorDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
     BookDTO:
       type: object
       properties:
-        author:
+        authorName:
           type: string
         id:
           type: integer
@@ -71,6 +97,18 @@ components:
           type: string
     JsonNode:
       type: object
+    JsonPatchItem:
+      type: object
+      properties:
+        op:
+          $ref: "#/components/schemas/JsonPatchOps"
+        path:
+          type: string
+        value:
+          $ref: "#/components/schemas/JsonPatchValue"
+      required:
+      - op
+      - path
     JsonPatchOps:
       type: string
       enum:
@@ -86,20 +124,3 @@ components:
       - type: number
       - type: boolean
       - type: object
-    VersionPatchOpsDTO:
-      type: object
-      properties:
-        op:
-          $ref: "#/components/schemas/JsonPatchOps"
-        path:
-          type: string
-          enum:
-          - /title
-          - /author/id
-          - /isbn
-        value:
-          $ref: "#/components/schemas/JsonPatchValue"
-      required:
-      - op
-      - path
-      - value

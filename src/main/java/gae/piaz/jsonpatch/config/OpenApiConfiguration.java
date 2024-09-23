@@ -1,6 +1,6 @@
 package gae.piaz.jsonpatch.config;
 
-import gae.piaz.jsonpatch.service.common.JsonPatchUpdate;
+import gae.piaz.jsonpatch.service.core.JsonPatchUpdate;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.*;
@@ -113,27 +113,20 @@ public class OpenApiConfiguration {
 
     private static void customizeJsonPatch(
             OpenAPI openApi, JsonPatchUpdate annotation, String pattern) {
-        String schemaName = annotation.schemaName();
-        String schemaRef = "#/components/schemas/" + schemaName;
+        String schemaRef = "#/components/schemas/" + "JsonPatchItem";
 
         Schema<?> patchDTO =
                 new ObjectSchema()
                         .addProperty("op", new Schema<>().$ref("#/components/schemas/JsonPatchOps"))
-                        .addProperty(
-                                "path",
-                                new StringSchema()
-                                        ._enum(
-                                                Stream.of(annotation.paths())
-                                                        .map(path -> "/" + path)
-                                                        .toList()))
+                        .addProperty("path", new StringSchema())
                         .addProperty(
                                 "value",
                                 new Schema<>().$ref("#/components/schemas/JsonPatchValue"));
 
-        patchDTO.required(List.of("op", "path", "value"));
+        patchDTO.required(List.of("op", "path"));
 
         // Add or update the array schema
-        openApi.getComponents().getSchemas().putIfAbsent(schemaName, patchDTO);
+        openApi.getComponents().getSchemas().putIfAbsent("JsonPatchItem", patchDTO);
 
         // Ensure the path and request body exist
         if (openApi.getPaths() != null
@@ -155,7 +148,8 @@ public class OpenApiConfiguration {
 
             requestBody.setRequired(true); // Make the requestBody required
 
-            // Add or update the responses
+            openApi.getPaths().get(pattern)
+                    .getPatch().setDescription("<b>Allowed paths are:</b><br><br>- " + String.join("<br>- ", annotation.allowedPaths()));            // Add or update the responses
             openApi.getPaths()
                     .get(pattern)
                     .getPatch()

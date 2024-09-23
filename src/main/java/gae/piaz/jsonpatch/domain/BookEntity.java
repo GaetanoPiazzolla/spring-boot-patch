@@ -19,7 +19,7 @@ public class BookEntity {
 
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     private AuthorEntity author;
 }

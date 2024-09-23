@@ -20,16 +20,18 @@ This project showcases a method to apply JSON Patch operations to JPA entities i
 The approach is designed to be generic, reusable, and optimized for performance.
 
 The project uses the following technologies and libraries:
+- Java 22
 - JSON Patch, as implemented by the [com.flipkart.zjsonpatch:zjsonpatch](https://github.com/flipkart-incubator/zjsonpatch) library
 - Spring Boot and related libs version 3.3.4
 - Swagger and OpenAPI for API documentation 3.0.1
+- H2 Database created automatically and automatically populated with data
 - Lombok
 
 ## Core Components
 The core components of the project are:
-- [JsonPatchService.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchService.java): The service class that applies JSON Patch operations to JPA entities.
-- [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/service/common/JsonPatchUpdate.java): An annotation that documents the API endpoints and specifies the allowed paths and type names for the Stubs.
-- [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/common/AbstractUpdateService.java): A generic service class that provides the update functionality for JPA entities.
+- [JsonPatchService.java](src/main/java/gae/piaz/jsonpatch/service/core/JsonPatchService.java): The service class that applies JSON Patch operations to JPA entities.
+- [JsonPatchUpdate.java](src/main/java/gae/piaz/jsonpatch/service/core/JsonPatchUpdate.java): An annotation that documents the API endpoints and specifies the allowed paths and type names for the Stubs.
+- [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/core/AbstractUpdateService.java): A generic service class that provides the update functionality for JPA entities.
 
 ## How to apply JSON Patch to ANY JPA entity
 1) You need to define Bean(s) with all the fields that you want to update in the entity, e.g: 
@@ -45,7 +47,7 @@ public record AuthorUpdateBean(
 ) { }
 ```
 
-2) Create a service class that extends the [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/common/AbstractUpdateService.java) class and implements all the abstract methods:
+2) Create a service class that extends the [AbstractUpdateService.java](src/main/java/gae/piaz/jsonpatch/service/core/AbstractUpdateService.java) class and implements all the abstract methods:
 ```java
 protected abstract T findEntityById(Integer entityId);
 protected abstract void updateEntityFields(T entity, U updateBean);

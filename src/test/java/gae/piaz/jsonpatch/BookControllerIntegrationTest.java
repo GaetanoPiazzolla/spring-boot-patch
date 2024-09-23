@@ -1,6 +1,6 @@
 package gae.piaz.jsonpatch;
 
-import static gae.piaz.jsonpatch.controller.BookController.APPLICATION_JSON_PATCH_VALUE;
+import static gae.piaz.jsonpatch.config.Constants.APPLICATION_JSON_PATCH_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext
-public class JsonPatchApplicationTests {
+public class BookControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
 
@@ -33,6 +33,10 @@ public class JsonPatchApplicationTests {
     @Test
     void updateBook_correct_200() throws Exception {
         int bookId = 2;
+        Optional<BookEntity> bookEntity = bookRepository.findById(bookId);
+        assertTrue(bookEntity.isPresent());
+        assertEquals("Java 102", bookEntity.get().getTitle());
+        String existingIsbn = bookEntity.get().getIsbn();
 
         String patch =
                 """
@@ -46,7 +50,6 @@ public class JsonPatchApplicationTests {
         MvcResult resp =
                 mockMvc.perform(
                                 patch("/api/v1/books/" + bookId)
-                                        .contentType(APPLICATION_JSON_PATCH_VALUE)
                                         .header("Content-Type", APPLICATION_JSON_PATCH_VALUE)
                                         .content(patch))
                         .andExpect(status().isOk())
@@ -56,10 +59,11 @@ public class JsonPatchApplicationTests {
                 objectMapper.readValue(resp.getResponse().getContentAsString(), BookDTO.class);
 
         assertEquals("updated", book.title());
-        Optional<BookEntity> bookEntity = bookRepository.findById(bookId);
+        bookEntity = bookRepository.findById(bookId);
         assertTrue(bookEntity.isPresent());
         assertEquals("updated", bookEntity.get().getTitle());
         assertEquals(2, bookEntity.get().getAuthor().getId());
+        assertEquals(existingIsbn, bookEntity.get().getIsbn());
     }
 
     @Test
@@ -74,7 +78,6 @@ public class JsonPatchApplicationTests {
                 """;
         mockMvc.perform(
                         patch("/api/v1/books/" + bookId)
-                                .contentType(APPLICATION_JSON_PATCH_VALUE)
                                 .header("Content-Type", APPLICATION_JSON_PATCH_VALUE)
                                 .content(patch))
                 .andExpect(status().isNotModified());
@@ -92,7 +95,6 @@ public class JsonPatchApplicationTests {
                 """;
         mockMvc.perform(
                         patch("/api/v1/books/" + bookId)
-                                .contentType(APPLICATION_JSON_PATCH_VALUE)
                                 .header("Content-Type", APPLICATION_JSON_PATCH_VALUE)
                                 .content(patch))
                 .andExpect(status().isBadRequest());
@@ -110,7 +112,6 @@ public class JsonPatchApplicationTests {
                 """;
         mockMvc.perform(
                         patch("/api/v1/books/" + bookId)
-                                .contentType(APPLICATION_JSON_PATCH_VALUE)
                                 .header("Content-Type", APPLICATION_JSON_PATCH_VALUE)
                                 .content(patch))
                 .andExpect(status().isNotFound());
