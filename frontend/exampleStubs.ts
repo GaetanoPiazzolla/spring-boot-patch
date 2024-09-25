@@ -1,14 +1,14 @@
-import { VersionPatchOpsDTO } from './api';
+import {JsonPatchItem, JsonPatchOps} from './api';
 import { Configuration, BookControllerApi } from './api';
 
-const patch: VersionPatchOpsDTO[] = [
+const patch: JsonPatchItem[] = [
     {
-        op: 'replace',
+        op: JsonPatchOps.Replace,
         value: 'New Title',
         path: '/title',
     },
     {
-        op: 'replace',
+        op: JsonPatchOps.Replace,
         value: 1,
         path: '/author/id',
     }];
